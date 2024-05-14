@@ -4,6 +4,13 @@ const PORT = 8080;
 
 app.set("view engine", "ejs");
 
+app.use(express.urlencoded({ extended: true }));
+
+app.post("/urls", (req, res) => {
+  console.log(req.body); // Log the POST request body to the console
+  res.send("Ok"); // Respond with 'Ok' (we will replace this)
+});
+
 const urlDatabase = {
   b2xVn2: "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com",
@@ -39,3 +46,16 @@ app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
+
+function generateRandomString() {
+  const character = "abcdefghijklmnopqrstuvwxyz";
+  let result = '';
+
+  for (let i = 0; i < 6; i++){
+    const randomIndex = math.floor(math.round * character.length);
+    result += character.charAt(randomIndex);
+  }
+  return result;
+}
+
+console.log(generateRandomString());
