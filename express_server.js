@@ -7,15 +7,25 @@ app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
 
 app.post("/urls", (req, res) => {
-  console.log(req.body); // Log the POST request body to the console
-  res.send("Ok"); // Respond with 'Ok' (we will replace this)
+  const id = generateRandomString();
+  const longURL = req.body.longURL;
+  urlDatabase[id] = longURL;
+  res.redirect(`/urls/${id}`);
 });
+
 
 const urlDatabase = {
   b2xVn2: "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com",
 };
 
+app.get("/u/:id", (req, res) => {
+  const shortURL = req.params.id;
+  const longURL = urlDatabase[shortURL];
+
+  res.redirect(longURL);
+ 
+});
 app.get("/urls",(req, res) => {
   const templateVars = { urls: urlDatabase };
   res.render("urls_index", templateVars);
@@ -48,12 +58,12 @@ app.listen(PORT, () => {
 
 
 function generateRandomString() {
-  const character = "abcdefghijklmnopqrstuvwxyz";
+  const character = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
   let result = '';
 
   for (let i = 0; i < 6; i++){
-    const randomIndex = math.floor(math.round * character.length);
-    result += character.charAt(randomIndex);
+    const randomIndex = Math.floor(Math.round * character.length);
+    result += character.randomIndex;
   }
   return result;
 }
