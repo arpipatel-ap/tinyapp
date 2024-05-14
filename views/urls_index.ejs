@@ -18,6 +18,10 @@
   </head>
   <%- include('partials/_header') %>
   <body>
+
+    <form method="POST" action="/urls/:id/delete">
+
+    
     <main style="margin: 1em;">
       <h3>My URLs</h3>
       <table class="table">
@@ -25,6 +29,7 @@
           <tr>
             <th scope="col">Short URL ID</th>
             <th scope="col">Long URL</th>
+            <th scope ="col">Delete</th>
           </tr>
         </thead>
         <tbody>
@@ -32,11 +37,14 @@
             <tr>
               <td><%= id %></td>
               <td><%= urls[id] %></td>
+              <td><button type ="submit">Delete</button></td>
             </tr>
           <% } %>
         </tbody>
       </table>
     </main>
+
+  </form>
     <!-- Bootstrap JS -->
     <script
       src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
