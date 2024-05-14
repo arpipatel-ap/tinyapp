@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/arpipatel-ap/tinyapp/issues"
   },
-  "homepage": "https://github.com/arpipatel-ap/tinyapp#readme"
+  "homepage": "https://github.com/arpipatel-ap/tinyapp#readme",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
 }
