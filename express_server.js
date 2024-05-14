@@ -14,6 +14,14 @@ app.post("/urls", (req, res) => {
 });
 
 
+app.post('/urls/:id/delete', (req, res) => {
+  const urlsId = req.params.id; 
+
+  delete urlDatabase[urlsId];
+
+  res.redirect('/urls');
+});
+
 const urlDatabase = {
   b2xVn2: "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com",
