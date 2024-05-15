@@ -12,16 +12,38 @@
   </head>
   <%- include('partials/_header') %>
   <body>
+    
+    
     <div class="card text-center">
       <div class="card-header"></div>
       <div class="card-body">
         <h5 class="card-title">TinyURL for: <%= longURL %></h5>
         <p class="card-text">
-          Short URL ID: <a href="/u/<%= id %>"><%= id %></a>
+          Short URL ID: <a href="/u/<%= shortURL %>"><%= shortURL%></a>
         </p>
       </div>
       <div class="card-footer text-muted"></div>
     </div>
+    <form method="POST" action="/urls/<%= shortURL %>/update">
+    <a href="/urls/new">Edit</a>
+    </form>
+
+    <main style="margin: 1em;">
+      <h3>Create TinyURL</h3>
+      <form class="form-inline" action="/urls/<%= shortURL%>/update" method="POST">
+        <div class="form-group mb-2">
+          <label for="longURL">Enter a URL:</label>
+          <input
+            class="form-control"
+            type="text"
+            name="newLongURL"
+            placeholder="http://"
+            style="width: 300px; margin: 1em"
+          />
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+      </form>
+    </main>
     <!-- Bootstrap JS -->
     <script
       src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
@@ -38,5 +60,6 @@
       integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
       crossorigin="anonymous"
     ></script>
+ 
   </body>
 </html>
