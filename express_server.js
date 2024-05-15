@@ -1,10 +1,13 @@
 const express = require("express");
+const cookieParser = require('cookie-parser');
 const app = express();
 const PORT = 8080;
 
 app.set("view engine", "ejs");
-
+//add middleware
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+
 function generateRandomString() {
   return Math.random().toString(36).substring(2, 8);
 }
@@ -14,14 +17,19 @@ const urlDatabase = {
 };
 
 
-app.get("/urls",(req, res) => {
-  const templateVars = { urls: urlDatabase };
-  res.render("urls_index", templateVars);
-});
-
 app.get("/", (req, res) => {
   res.send("Hello");
 });
+//cookies
+app.get("/urls", (req, res) => {
+  console.log('Username cookie:', req.cookies["username"]);
+  const templateVars = {
+    urls: urlDatabase,
+    username: req.cookies["username"],
+  };
+  res.render("urls_index", templateVars);
+});
+
 
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
@@ -54,12 +62,24 @@ app.get("/urls/:id", (req, res) => {
   
 });
 
+
+
+app.get('/urls', (req, res) => {
+    const username = req.user.username; // Access the username from the user object, adjust as needed
+    
+    // Render the view and pass the username as a local variable
+    res.render('urls_index', { username: username });
+});
+
+
 app.post("/urls", (req, res) => {
   const id = generateRandomString();
   const longURL = req.body.longURL;
   urlDatabase[id] = longURL;
   res.redirect(`/urls/${id}`);
 });
+
+
 
 // POST /products/:id/edit
 app.post('/urls/:id/update', (req, res) => {
@@ -84,10 +104,9 @@ app.post('/urls/:id/delete', (req, res) => {
 
 //Login Post
 app.post('/urls/login', (req,res) => {
-  const username = req.body;
+  const username = req.body.username;  
   //console.log(username);
   res.cookie('username', username);
-
   res.redirect('/urls');
 });
 
