@@ -12,9 +12,16 @@ function generateRandomString() {
   return Math.random().toString(36).substring(2, 8);
 }
 const urlDatabase = {
-  b2xVn2: "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com",
+  b6UTxQ: {
+    longURL: "https://www.tsn.ca",
+    userID: "aJ48lW",
+  },
+  i3BoGr: {
+    longURL: "https://www.google.ca",
+    userID: "aJ48lW",
+  },
 };
+
 const users = {};
 
 //helper function by email
@@ -26,18 +33,33 @@ function getUserByEmail(email) {
   }
   return null;
 }
+function urlsForUser(id) {
+  const userUrls = {};
+  for (const urlId in urlDatabase) {
+    if (urlDatabase[urlId].userID === id) {
+      userUrls[urlId] = urlDatabase[urlId];
+    }
+  }
+  return userUrls;
+}
 
 app.get("/", (req, res) => {
   res.send("Hello");
 });
+
 //cookies
 app.get("/urls", (req, res) => {
   
-  const userId = req.cookies["user_id"];
+const userId = req.cookies["user_id"];
+  if (!userId) {
+    return res.status(403).send("You are not logged in");
+  }
   
+
+
+  const userUrls = urlsForUser(userId);
   const templateVars = {
-    urls: urlDatabase,
-  //  username: req.cookies["username"],
+    urls: userUrls,
     user: users[userId]
   };
   console.log(templateVars);
@@ -49,45 +71,57 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
-// app.get("/hello", (req, res) => {
-//   res.send("<html><body>Hello <b>World</b></body></html>\n");
 
-// });
 app.get("/urls/new", (req, res) => {
   const userId = req.cookies["user_id"];
   const user = users[userId];
   if(user){
     res.render("urls_new", { user: user });
   }else {
-    res.redirect('/urls/login');
+    res.redirect('/login');
   }
  
 });
 
 app.get("/u/:id", (req, res) => {
-  const shortId = req.params.id
-  const longURL = urlDatabase[req.params.shortURL]
+  const shortId = req.params.id;
+  const url = urlDatabase[shortId];
   //const templateVars = { id: shortId, longURL: urlDatabase[shortId]};
   //res.render("urls_show", templateVars);
-  if(longURL){
+  if(url){
+    const longURL = url.longURL;
     res.redirect(longURL);
+    console.log(longURL)
   }else {
-    res.status(404).send('<p>The requested short URL does not exist.</p>')
+    res.status(404).send("<p>The short URL does not exist.</p>");
   }
-  
-
 });
 
+//update delete
 app.get("/urls/:id", (req, res) => {
-  const shortURL = req.params.id;
-  const longURL = urlDatabase[shortURL];
-  //  console.log("Hello", shortURL);
-  //  console.log("Enter", longURL);
   const userId = req.cookies["user_id"];
+  if (!userId) {
+    return res.status(401).send("You have to logged in to view this URL.");
+  }
+  const shortURL = req.params.id;
+  const url = urlDatabase[shortId]; 
+  const longURL = urlDatabase[shortURL];
   const user = users[userId];
- 
-  let templateVars = { shortURL: shortURL, longURL: longURL, user: user };
-  res.render("urls_login", templateVars);
+
+  if(!url){
+    return res.status(401).send("This URL doesn't exsit");
+  }
+
+  if (url.userID !== userId) {
+    return res.status(401).send("You do not have permission to view this URL.");
+  }
+  
+  let templateVars = { 
+    shortURL: shortURL,
+    longURL: longURL,
+    user: user 
+  };
+  res.render("urls_show", templateVars);
   
 });
 
@@ -97,7 +131,7 @@ app.get('/login', (req, res) => {
   if (userId) {
     res.redirect('/urls');
   } else {
-    res.render('urls_login');
+    res.render('login',{user: null});
   }
 });
 
@@ -108,7 +142,7 @@ app.get('/register', (req, res) => {
   if (userId) {
     res.redirect('/urls');
   } else {
-    res.render('urls_register',{ user: user });
+    res.render('register',{ user: null });
   }
   
   
@@ -130,24 +164,46 @@ app.post("/urls", (req, res) => {
 });
 
 
-// POST /products/:id/edit
+// POST /products/:id/update
 app.post('/urls/:id/update', (req, res) => {
+  const userId = req.cookies["user_id"];
+  if (!userId) {
+    return res.status(401).send("You must be logged in to update this");
+  }
   const updateId = req.params.id;
- 
-  const newLongURL = req.body.newLongURL;
+  const url = urlDatabase[updateId];
 
-  urlDatabase[updateId] = newLongURL;
+  if (!url) {
+    return res.status(404).send("The requested URL does not exist.");
+  }
   
-  res.redirect(`/urls/${updateId}`)
-//   const price = Number(req.body.price);  
+  if (url.userID !== userId) {
+    return res.status(401).send("You do not have permission to edit this URL.");
+  }
 
+  const newLongURL = req.body.newLongURL;
+  urlDatabase[updateId].longURL = newLongURL;
+  res.redirect(`/urls/${updateId}`)
+  
  });
 //DELETE DATA
 app.post('/urls/:id/delete', (req, res) => {
-  const urlsId = req.params.id; 
+  const userId = req.cookies["user_id"];
+  if (!userId) {
+    return res.status(401).send("You have to  logged in to update this");
+  }
+  const urlsId = req.params.id;
+  const url = urlDatabase[urlsId];
+
+  if (!url) {
+    return res.status(404).send("The requested URL does not exist.");
+  }
+  
+  if (url.userID !== userId) {
+    return res.status(401).send("You do not have permission to delete this URL.");
+  }
 
   delete urlDatabase[urlsId];
-
   res.redirect('/urls');
 });
 
@@ -162,7 +218,7 @@ app.post('/login', (req, res) => {
   }
   res.cookie('user_id', user.id);
 
-  res.redirect('/urls/login');
+  res.redirect('/urls');
 });
 
 //Logout
@@ -173,6 +229,7 @@ app.post('/logout', (req, res) => {
 
 
 //Register handler
+
 app.post('/register', (req, res) => {
   const {email, password} = req.body;
   // Check if the email and password are empty string
@@ -211,3 +268,11 @@ app.listen(PORT, () => {
 
 
 
+
+
+  // const templateVars = {
+  //   urls: urlDatabase,
+  // //  username: req.cookies["username"],
+  //   user: users[userId]
+  // };
+  // console.log(templateVars);
