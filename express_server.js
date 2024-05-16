@@ -17,6 +17,16 @@ const urlDatabase = {
 };
 const users = {};
 
+//helper function by email
+function getUserByEmail(email) {
+  for (const userId in users) {
+    if (users[userId].email === email) {
+      return users[userId];
+    }
+  }
+  return null;
+}
+
 app.get("/", (req, res) => {
   res.send("Hello");
 });
@@ -114,15 +124,26 @@ app.post('/urls/login', (req,res) => {
 
 //Logout
 app.post('/logout', (req, res) => {
-  res.clearCookie('username'); // Clear the username cookie
+  res.clearCookie('user'); // Clear the username cookie
   res.redirect('/urls'); // Redirect to the homepage or wherever appropriate
 });
 
 
 //Register handler
 app.post('/register', (req, res) => {
-  const userId = generateRandomString();
   const {email, password} = req.body;
+  // Check if the email and password are empty string
+  if (!email || !password) {
+    return res.status(400).send("Email and password are required");
+  }
+
+  // Check if the email already exists in the users object
+  if (getUserByEmail(email)) {
+    return res.status(400).send("Email already exists");
+  }
+
+  const userId = generateRandomString();
+ 
   const user = {
     id: userId,
     email: email,
@@ -130,6 +151,7 @@ app.post('/register', (req, res) => {
   };
 
   users[userId] = user;
+  console.log(user);
 
   res.cookie('user_id', userId);
 
