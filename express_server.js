@@ -56,15 +56,26 @@ app.get("/urls.json", (req, res) => {
 app.get("/urls/new", (req, res) => {
   const userId = req.cookies["user_id"];
   const user = users[userId];
-  res.render("urls_new", { user: user });
+  if(user){
+    res.render("urls_new", { user: user });
+  }else {
+    res.redirect('/urls/login');
+  }
+ 
 });
 
 app.get("/u/:id", (req, res) => {
   const shortId = req.params.id
-  const templateVars = { id: shortId, longURL: urlDatabase[shortId]};
-  //res.render("urls_show", templateVars);
   const longURL = urlDatabase[req.params.shortURL]
-  res.redirect(longURL)
+  //const templateVars = { id: shortId, longURL: urlDatabase[shortId]};
+  //res.render("urls_show", templateVars);
+  if(longURL){
+    res.redirect(longURL);
+  }else {
+    res.status(404).send('<p>The requested short URL does not exist.</p>')
+  }
+  
+
 });
 
 app.get("/urls/:id", (req, res) => {
@@ -80,22 +91,42 @@ app.get("/urls/:id", (req, res) => {
   
 });
 
+//Login
+app.get('/login', (req, res) => {
+  const userId = req.cookies["user_id"];
+  if (userId) {
+    res.redirect('/urls');
+  } else {
+    res.render('urls_login');
+  }
+});
 
 //Register
 app.get('/register', (req, res) => {
   const userId = req.cookies["user_id"];
   const user = users[userId];
-  res.render('urls_register', { user: user });
+  if (userId) {
+    res.redirect('/urls');
+  } else {
+    res.render('urls_register',{ user: user });
+  }
+  
+  
 });
 
 
 //all post/ request
 
 app.post("/urls", (req, res) => {
-  const id = generateRandomString();
-  const longURL = req.body.longURL;
-  urlDatabase[id] = longURL;
-  res.redirect(`/urls/${id}`);
+  const userId = req.cookies["user_id"];
+  if(user){
+    const id = generateRandomString();
+    const longURL = req.body.longURL;
+    urlDatabase[id] = longURL;
+    res.redirect(`/urls/${id}`);
+  }else {
+    res.status(403).send("<p>You need to be logged in to shorten URLs.</p>");
+  }
 });
 
 
@@ -167,7 +198,7 @@ app.post('/register', (req, res) => {
 
   res.cookie('user_id', userId);
 
-  res.redirect('/urls');
+  res.redirect('/urls/login');
 });
   
 
