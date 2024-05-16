@@ -54,7 +54,9 @@ app.get("/urls.json", (req, res) => {
 
 // });
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  const userId = req.cookies["user_id"];
+  const user = users[userId];
+  res.render("urls_new", { user: user });
 });
 
 app.get("/u/:id", (req, res) => {
@@ -81,7 +83,9 @@ app.get("/urls/:id", (req, res) => {
 
 //Register
 app.get('/register', (req, res) => {
-  res.render('urls_register');
+  const userId = req.cookies["user_id"];
+  const user = users[userId];
+  res.render('urls_register', { user: user });
 });
 
 
@@ -117,16 +121,22 @@ app.post('/urls/:id/delete', (req, res) => {
 });
 
 //Login Post
-app.post('/urls/login', (req,res) => {
-  const username = req.body.username;  
-  //console.log(username);
-  res.cookie('username', username);
-  res.redirect('/urls');
+app.post('/login', (req, res) => {
+  const { email, password } = req.body;
+ 
+  const user = getUserByEmail(email);
+
+  if (!user || user.password !== password) {
+    return res.status(403).send("Invalid email or password");
+  }
+  res.cookie('user_id', user.id);
+
+  res.redirect('/urls/login');
 });
 
 //Logout
 app.post('/logout', (req, res) => {
-  res.clearCookie('user'); // Clear the username cookie
+  res.clearCookie('user_id'); 
   res.redirect('/urls'); // Redirect to the homepage or wherever appropriate
 });
 
@@ -157,7 +167,7 @@ app.post('/register', (req, res) => {
 
   res.cookie('user_id', userId);
 
-  res.redirect('/register');
+  res.redirect('/urls');
 });
   
 
