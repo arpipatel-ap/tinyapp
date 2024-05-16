@@ -70,9 +70,11 @@ app.get("/urls/:id", (req, res) => {
   const longURL = urlDatabase[shortURL];
   //  console.log("Hello", shortURL);
   //  console.log("Enter", longURL);
+  const userId = req.cookies["user_id"];
+  const user = users[userId];
  
-  let templateVars = { shortURL: shortURL, longURL: longURL};
-  res.render("urls_show", templateVars);
+  let templateVars = { shortURL: shortURL, longURL: longURL, user: user };
+  res.render("urls_login", templateVars);
   
 });
 
@@ -155,7 +157,7 @@ app.post('/register', (req, res) => {
 
   res.cookie('user_id', userId);
 
-  res.redirect('/urls');
+  res.redirect('/register');
 });
   
 
