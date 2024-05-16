@@ -15,18 +15,22 @@ const urlDatabase = {
   b2xVn2: "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com",
 };
-
+const users = {};
 
 app.get("/", (req, res) => {
   res.send("Hello");
 });
 //cookies
 app.get("/urls", (req, res) => {
-  console.log('Username cookie:', req.cookies["username"]);
+  
+  const userId = req.cookies["user_id"];
+  
   const templateVars = {
     urls: urlDatabase,
-    username: req.cookies["username"],
+  //  username: req.cookies["username"],
+    user: users[userId]
   };
+  console.log(templateVars);
   res.render("urls_index", templateVars);
 });
 
@@ -35,10 +39,10 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
+// app.get("/hello", (req, res) => {
+//   res.send("<html><body>Hello <b>World</b></body></html>\n");
 
-});
+// });
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
@@ -63,18 +67,13 @@ app.get("/urls/:id", (req, res) => {
 });
 
 
-
-app.get('/urls', (req, res) => {
-    const username = req.user.username; // Access the username from the user object, adjust as needed
-    
-    // Render the view and pass the username as a local variable
-    res.render('urls_index', { username: username });
-});
-
 //Register
 app.get('/register', (req, res) => {
   res.render('urls_register');
 });
+
+
+//all post/ request
 
 app.post("/urls", (req, res) => {
   const id = generateRandomString();
@@ -82,7 +81,6 @@ app.post("/urls", (req, res) => {
   urlDatabase[id] = longURL;
   res.redirect(`/urls/${id}`);
 });
-
 
 
 // POST /products/:id/edit
@@ -113,11 +111,33 @@ app.post('/urls/login', (req,res) => {
   res.cookie('username', username);
   res.redirect('/urls');
 });
+
 //Logout
 app.post('/logout', (req, res) => {
   res.clearCookie('username'); // Clear the username cookie
   res.redirect('/urls'); // Redirect to the homepage or wherever appropriate
 });
+
+
+//Register handler
+app.post('/register', (req, res) => {
+  const userId = generateRandomString();
+  const {email, password} = req.body;
+  const user = {
+    id: userId,
+    email: email,
+    password: password
+  };
+
+  users[userId] = user;
+
+  res.cookie('user_id', userId);
+
+  res.redirect('/urls');
+});
+  
+
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
