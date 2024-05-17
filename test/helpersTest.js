@@ -1,5 +1,4 @@
 const { assert } = require('chai');
-
 const { getUserByEmail } = require('../helpers.js');
 
 const testUsers = {
@@ -13,6 +12,17 @@ const testUsers = {
     email: "user2@example.com", 
     password: "dishwasher-funk"
   }
+};
+
+const testUrlDatabase = {
+  b6UTxQ: {
+    longURL: "https://www.tsn.ca",
+    userID: "aJ48lW",
+  },
+  i3BoGr: {
+    longURL: "https://www.google.ca",
+    userID: "aJ48lW",
+  },
 };
 
 describe('getUserByEmail', function() {
