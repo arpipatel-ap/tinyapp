@@ -1,5 +1,6 @@
 const express = require("express");
 const cookieSession = require('cookie-session');
+const {getUserByEmail } = require("./helpers");
 const bcrypt = require("bcryptjs");
 const app = express();
 const PORT = 8080;
@@ -35,16 +36,8 @@ const users = {
   }
 };
 
-// Function to retrieve a user by their email
-function getUserByEmail(email) {
-  
-  for (let userId in users) {
-    if (users[userId].email === email) {
-      return users[userId];
-    }
-  }
-  return null;
-}
+
+
 
 // Function to retrieve URLs associated with a specific user
 function urlsForUser(id) {
@@ -251,8 +244,8 @@ app.post('/login', (req, res) => {
 
 // Route to Logout page
 app.post('/logout', (req, res) => {
-  req.session.user_id = null;
-  res.redirect('/urls'); // Redirect to the homepage or wherever appropriate
+  req.session = null;
+  res.redirect('/urls'); // Redirect to the homepage or wherever appropriatef
 });
 
 
