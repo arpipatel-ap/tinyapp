@@ -5,11 +5,11 @@ TinyApp is a full stack web application built with Node and Express that allows 
 ## Final Product
 
 
+!["Screenshort of register page"](https://github.com/arpipatel-ap/tinyapp/blob/master/docs/register.png)
 !["Screenshort of login page"](https://github.com/arpipatel-ap/tinyapp/blob/master/docs/login.png)
-[#](https://github.com/arpipatel-ap/tinyapp/blob/master/docs/login.png)
-[#](https://github.com/arpipatel-ap/tinyapp/blob/master/docs/newurls.png)
-[#](https://github.com/arpipatel-ap/tinyapp/blob/master/docs/short_url.png)
-[#](https://github.com/arpipatel-ap/tinyapp/blob/master/docs/urls.png)
+!["Screenshort of new url"](https://github.com/arpipatel-ap/tinyapp/blob/master/docs/newurls.png)
+!["Screenshort of  short url page"](https://github.com/arpipatel-ap/tinyapp/blob/master/docs/short_url.png)
+!["Screenshort of url page"](https://github.com/arpipatel-ap/tinyapp/blob/master/docs/urls.png)
 
 
 ## Dependencies
