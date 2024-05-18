@@ -15,9 +15,7 @@ app.use(cookieSession({
   keys: ['ajkdffgjsdfj'],
 }));
 
-app.get("/", (req, res) => {
-  res.send("Hello");
-});
+
 
 // Route to display user's URLs
 app.get("/urls", (req, res) => {
@@ -69,11 +67,15 @@ app.get("/urls/:id", (req, res) => {
   }
   const shortURL = req.params.id;
   const url = urlDatabase[shortURL]; 
-  const longURL = urlDatabase[shortURL].longURL;
-  const user = users[userId];
-  if(!url){
-    return res.status(401).send("This URL doesn't exsit");
+  console.log("URL fetched:", url);
+  if (!url) {
+    return res.status(404).send("This short URL does not exist.");
   }
+  if (!url.longURL) {
+    return res.status(500).send("This URL entry is malformed.");
+  }
+  const longURL = url.longURL;
+  const user = users[userId];
   if (url.userId !== userId) {
     return res.status(401).send("You do not have permission to view this URL.");
   }
@@ -84,6 +86,7 @@ app.get("/urls/:id", (req, res) => {
   };
   res.render("urls_show", templateVars);
 });
+
 
 // Route to display login page
 app.get('/login', (req, res) => {
@@ -204,6 +207,9 @@ app.post('/register', (req, res) => {
   users[userId] = user;
   req.session.user_id = userId;
   res.redirect('/login');
+});
+app.get("/", (req, res) => {
+  res.send("Hello");
 });
   
 //Server start
