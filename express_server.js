@@ -16,7 +16,6 @@ app.use(cookieSession({
 }));
 
 
-
 // Route to display user's URLs
 app.get("/urls", (req, res) => {
 const userId = req.session["user_id"];
@@ -142,7 +141,7 @@ app.post('/urls/:id/update', (req, res) => {
   }
   const newLongURL = req.body.newLongURL;
   urlDatabase[updateId].longURL = newLongURL;
-  res.redirect(`/urls/${updateId}`)
+  res.redirect('/urls');
  });
 
 // Route to update a URL
