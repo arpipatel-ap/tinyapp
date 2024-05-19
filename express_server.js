@@ -172,7 +172,7 @@ app.post('/login', (req, res) => {
   }else {
     const result = bcrypt.compareSync(password, user.password);
     if(result){
-      res.cookie('user_id', user.id);
+      req.session.user_id = user.id;
       res.redirect('/urls');
     }else {
       return res.status(403).send("password does not match");
