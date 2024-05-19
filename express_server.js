@@ -182,7 +182,7 @@ app.post('/login', (req, res) => {
 // Route to Logout page
 app.post('/logout', (req, res) => {
   req.session = null;
-  res.redirect('/urls');
+  res.redirect('/login');
 });
 
 
