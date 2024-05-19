@@ -15,6 +15,15 @@ app.use(cookieSession({
   keys: ['ajkdffgjsdfj'],
 }));
 
+// Redirect user to home page.
+app.get("/", (req, res) => {
+  let userId = req.session["user_id"];
+  if (!userId) {
+    return res.redirect('/login');
+  } else {
+    return res.redirect('/urls');
+  }
+});
 
 // Route to display user's URLs
 app.get("/urls", (req, res) => {
